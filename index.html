@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fin de Semana Bomba 💣</title>
+  <style>
+    body {
+      background: radial-gradient(circle at center, #222 0%, #000 100%);
+      color: white;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+      color: #ffecb3;
+      text-shadow: 0 0 15px #ff9800;
+    }
+
+    #countdown {
+      font-size: 1.8em;
+      margin-bottom: 30px;
+      color: #00e676;
+      text-shadow: 0 0 10px #00ffcc;
+    }
+
+    /* Bomba */
+    .bomb {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      background: radial-gradient(circle at 30% 30%, #555, #111);
+      border-radius: 50%;
+      box-shadow: 0 0 25px #000 inset;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    /* Mecha */
+    .fuse {
+      position: absolute;
+      top: -40px;
+      left: 50%;
+      width: 4px;
+      height: 40px;
+      background: linear-gradient(to top, #ff0, #f00);
+      transform: translateX(-50%);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .spark {
+      position: absolute;
+      top: -8px;
+      left: 50%;
+      width: 10px;
+      height: 10px;
+      background: radial-gradient(circle, #fff200, #ff4500);
+      border-radius: 50%;
+      transform: translateX(-50%);
+      animation: spark 0.1s infinite alternate;
+      box-shadow: 0 0 15px #ff5722;
+    }
+
+    @keyframes spark {
+      0% { transform: translate(-50%, 0) scale(1); opacity: 1; }
+      100% { transform: translate(-50%, 3px) scale(1.2); opacity: 0.6; }
+    }
+
+    /* Barra de progreso (mecha consumiéndose) */
+    .fuse-progress {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 100%;
+      background: #111;
+      animation: burnFuse linear forwards;
+      transform-origin: bottom;
+    }
+
+    @keyframes explosion {
+      0% { transform: scale(1); opacity: 1; }
+      100% { transform: scale(3); opacity: 0; filter: blur(20px); }
+    }
+
+    /* Texto final */
+    #finalMessage {
+      display: none;
+      font-size: 2.2em;
+      text-align: center;
+      color: #ff4081;
+      text-shadow: 0 0 20px #ff1744;
+      animation: appear 2s ease forwards;
+    }
+
+    @keyframes appear {
+      0% { opacity: 0; transform: scale(0.5); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+  </style>
+</head>
+<body>
+  <h1>💣 Fin de Semana Bomba 💣</h1>
+  <div id="countdown"></div>
+
+  <div class="bomb">
+    <div class="fuse">
+      <div class="fuse-progress" id="fuseProgress"></div>
+      <div class="spark"></div>
+    </div>
+  </div>
+
+  <div id="finalMessage">🎉 ¡Fin de semana bomba en Las Vegas de Canelones! 🎉</div>
+
+  <script>
+    // Fecha objetivo: 14 de noviembre a las 14:00 (hora local Uruguay)
+    const targetDate = new Date("2025-11-14T14:00:00-03:00").getTime();
+    const countdown = document.getElementById("countdown");
+    const fuseProgress = document.getElementById("fuseProgress");
+    const bomb = document.querySelector(".bomb");
+    const finalMessage = document.getElementById("finalMessage");
+
+    function updateCountdown() {
+      const now = new Date().getTime();
+      const distance = targetDate - now;
+
+      if (distance <= 0) {
+        countdown.textContent = "💥 ¡BOOM!";
+        bomb.style.animation = "explosion 1s ease forwards";
+        setTimeout(() => {
+          bomb.style.display = "none";
+          finalMessage.style.display = "block";
+        }, 1000);
+        clearInterval(timer);
+        return;
+      }
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      countdown.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+      
+      // Progreso de la mecha (va consumiéndose)
+      const totalTime = targetDate - (new Date().setFullYear(2025, 10, 10, 14, 0, 0)); // desde el 10/11 a las 14:00
+      const progress = Math.max(0, 1 - distance / totalTime);
+      fuseProgress.style.height = `${progress * 100}%`;
+    }
+
+    const timer = setInterval(updateCountdown, 1000);
+    updateCountdown();
+  </script>
+</body>
+</html>
